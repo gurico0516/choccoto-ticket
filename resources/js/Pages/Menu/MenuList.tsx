@@ -58,7 +58,7 @@ const MenuList: React.FC<Props> = ({ menus, isAuthenticated }) => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {isAuthenticated && (
                 <div className="col-span-full text-right mb-2">
-                    <a href="/menus/create" className="bg-green-500 text-white p-2 rounded mr-2">メニュー追加</a>
+                    <a href="/menus/create" className="bg-green-500 text-white p-2 rounded mr-2">メニュー作成</a>
                     <a href="/orders/index" className="bg-gray-500 text-white p-2 rounded mr-2">注文受付リスト</a>
                     <button onClick={handleLogout} className="bg-red-500 text-white p-2 rounded mr-2">ログアウト</button>
                 </div>

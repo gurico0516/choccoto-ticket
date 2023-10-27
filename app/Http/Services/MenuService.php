@@ -3,31 +3,79 @@
 namespace App\Http\Services;
 
 use App\Http\Repositories\MenuRepository;
+use Illuminate\Support\Collection;
+use App\Models\Menu;
 
-class MenuService {
+class MenuService
+{
+    /**
+     * @var MenuRepository
+     */
     protected $menuRepository;
 
-    public function __construct(MenuRepository $menuRepository) {
+    /**
+     * MenuService constructor.
+     *
+     * @param MenuRepository $menuRepository
+     * @return void
+     */
+    public function __construct(MenuRepository $menuRepository)
+    {
         $this->menuRepository = $menuRepository;
     }
 
-    public function getAllMenus() {
+    /**
+     * メニュー一覧を取得します。
+     *
+     * @return Collection
+     */
+    public function getAllMenus(): Collection
+    {
         return $this->menuRepository->getAll();
     }
 
-    public function createMenu($data) {
+    /**
+     * メニューを登録します。
+     *
+     * @param array $data
+     * @return Menu
+     */
+    public function createMenu(array $data): Menu
+    {
         return $this->menuRepository->create($data);
     }
 
-    public function getMenuById($id) {
+    /**
+     * メニューを取得します。
+     *
+     * @param integer $id
+     * @return Menu
+     */
+    public function getMenuById(int $id): Menu
+    {
         return $this->menuRepository->findById($id);
     }
 
-    public function updateMenu($id, $data) {
+    /**
+     * メニューを更新します。
+     *
+     * @param integer $id
+     * @param array $data
+     * @return Menu
+     */
+    public function updateMenu(int $id, array $data): Menu
+    {
         return $this->menuRepository->update($id, $data);
     }
 
-    public function deleteMenu($id) {
+    /**
+     * メニューを削除します。
+     *
+     * @param integer $id
+     * @return boolean
+     */
+    public function deleteMenu(int $id)
+    {
         return $this->menuRepository->delete($id);
     }
 }

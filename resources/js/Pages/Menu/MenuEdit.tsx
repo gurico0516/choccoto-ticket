@@ -22,11 +22,11 @@ const MenuEdit: React.FC<MenuEditProps> = ({ menu }) => {
     return (
         <div className="bg-gray-100 min-h-screen p-6">
             <div className="max-w-md mx-auto bg-white rounded-xl p-8 shadow-md">
-                <h1 className="text-2xl font-semibold mb-4">Edit Menu</h1>
+                <h1 className="text-2xl font-semibold mb-4">メニュー編集</h1>
                 
                 <div className="mb-4">
-                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="menu-name">
-                        メニュー名
+                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="メニュー名">
+                        メニュー
                     </label>
                     <input 
                         type="text"
@@ -39,7 +39,7 @@ const MenuEdit: React.FC<MenuEditProps> = ({ menu }) => {
                 </div>
                 
                 <div className="mb-4">
-                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="menu-price">
+                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="メニュー価格">
                         価格
                     </label>
                     <input 

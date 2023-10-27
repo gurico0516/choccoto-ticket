@@ -3,27 +3,64 @@
 namespace App\Http\Repositories;
 
 use App\Models\Menu;
+use Illuminate\Support\Collection;
 
-class MenuRepository {
-    public function getAll() {
+class MenuRepository
+{
+    /**
+     * メニュー一覧を取得します。
+     *
+     * @return Collection
+     */
+    public function getAll(): Collection
+    {
         return Menu::all();
     }
 
-    public function create($data) {
+    /**
+     * メニューを登録します。
+     *
+     * @param array $data
+     * @return Menu
+     */
+    public function create(array $data): Menu
+    {
         return Menu::create($data);
     }
 
-    public function findById($id) {
+    /**
+     * メニューを取得します。
+     *
+     * @param integer $id
+     * @return Menu
+     */
+    public function findById(int $id)
+    {
         return Menu::find($id);
     }
 
-    public function update($id, $data) {
+    /**
+     * メニューを更新します。
+     *
+     * @param integer $id
+     * @param array $data
+     * @return Menu
+     */
+    public function update(int $id, array $data): Menu
+    {
         $menu = $this->findById($id);
         $menu->update($data);
         return $menu;
     }
 
-    public function delete($id) {
+    /**
+     * メニューを削除します。
+     *
+     * @param integer $id
+     * @return bool
+     */
+    public function delete(int $id): bool
+    {
         $menu = $this->findById($id);
         return $menu->delete();
     }

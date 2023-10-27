@@ -42,6 +42,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/menus/{id}', [MenuController::class, 'update'])->name('menus.update');
     Route::delete('/menus/{id}', [MenuController::class, 'destroy'])->name('menus.destroy');
     Route::get('/orders/index', [OrderController::class, 'index'])->name('orders.index');
+    Route::post('/orders/delete', [OrderController::class, 'delete'])->name('orders.delete');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');

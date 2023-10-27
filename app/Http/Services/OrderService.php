@@ -3,19 +3,43 @@
 namespace App\Http\Services;
 
 use App\Http\Repositories\OrderRepository;
+use App\Models\Order;
 
-class OrderService {
+class OrderService
+{
+    /**
+     * @var OrderRepository
+     */
     protected $orderRepository;
 
-    public function __construct(OrderRepository $orderRepository) {
+    /**
+     * OrderService constructor.
+     *
+     * @param OrderRepository $orderRepository
+     * @return void
+     */
+    public function __construct(OrderRepository $orderRepository)
+    {
         $this->orderRepository = $orderRepository;
     }
 
-    public function placeOrder($orderData) {
+    /**
+     * 注文を行います。
+     *
+     * @param array $orderData
+     * @return Order
+     */
+    public function placeOrder(array $orderData): Order
+    {
         return $this->orderRepository->create($orderData);
     }
 
-    public function getAllOrdersWithDetails()
+    /**
+     * 注文一覧を取得します。
+     *
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function getAllOrdersWithDetails(): \Illuminate\Database\Eloquent\Collection
     {
         $orders = $this->orderRepository->getAllOrdersWithMenuDetails();
 
@@ -25,5 +49,16 @@ class OrderService {
         }
 
         return $orders;
+    }
+
+    /**
+     * 注文番号で指定された注文を削除します。
+     *
+     * @param array $ids
+     * @return void
+     */
+    public function deleteOrdersByOrderNumbers(array $ids)
+    {
+        $this->orderRepository->deleteByOrderNumbers($ids);
     }
 }
