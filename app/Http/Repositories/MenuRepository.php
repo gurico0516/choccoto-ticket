@@ -25,6 +25,7 @@ class MenuRepository
      */
     public function create(array $data): Menu
     {
+
         return Menu::create($data);
     }
 

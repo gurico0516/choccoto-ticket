@@ -14,9 +14,15 @@ interface Order {
 interface Props {
     orders: Order[];
     isAuthenticated: boolean;
+    user_role?: number;
+    user_shop_id?: number;
 }
 
-const OrderList: React.FC<Props> = ({ orders, isAuthenticated }) => {
+const OrderList: React.FC<Props> = ({ orders, isAuthenticated, user_role, user_shop_id }) => {
+    const [selectedIds, setSelectedIds] = useState<number[]>([]);
+
+    const filteredMenus = orders.filter(order => order.shop_id === user_shop_id);
+
     const formatDateTime = (dateTimeString: string) => {
         const dateTime = new Date(dateTimeString);
         const month = dateTime.getMonth() + 1;
@@ -30,13 +36,9 @@ const OrderList: React.FC<Props> = ({ orders, isAuthenticated }) => {
         Inertia.post('/logout');
     };
 
-    console.log("Orders:", orders);
-
     const moveMenuList = () => {
         Inertia.get('/menus');
     };
-
-    const [selectedIds, setSelectedIds] = useState<number[]>([]);
 
     const handleOrderSelect = (orderId: number) => {
         if (selectedIds.includes(orderId)) {
@@ -66,7 +68,7 @@ const OrderList: React.FC<Props> = ({ orders, isAuthenticated }) => {
     return (
         <div className="p-4">
             <h1 className="text-2xl mb-4">注文受付リスト</h1>
-            {isAuthenticated && (
+            {isAuthenticated && user_role === 1 && (
                 <div className="text-right mb-2">
                     <button onClick={handleLogout} className="bg-red-500 text-white p-2 rounded mr-2">ログアウト</button>
                     <button onClick={moveMenuList} className="bg-green-500 text-white p-2 rounded">メニューに戻る</button>
@@ -119,7 +121,7 @@ const OrderList: React.FC<Props> = ({ orders, isAuthenticated }) => {
                     ))}
                 </tbody>
             </table>
-            {isAuthenticated && (
+            {isAuthenticated && user_role === 1 && (
                 <div className="text-right mt-2">
                     <button onClick={handleDeleteSelected} className="bg-red-500 text-white p-2 rounded mr-2">選択した注文を削除</button>
                 </div>

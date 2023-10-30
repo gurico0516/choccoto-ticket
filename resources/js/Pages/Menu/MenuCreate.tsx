@@ -1,12 +1,16 @@
 import React, { useState } from "react";
 import { Inertia } from '@inertiajs/inertia';
 
-const MenuCreate: React.FC = () => {
+interface Props {
+    shopId: number;
+}
+
+const MenuCreate: React.FC<Props> = (props) => {
     const [name, setName] = useState('');
     const [price, setPrice] = useState(0);
 
     const handleSubmit = () => {
-        Inertia.post('/menus', { name, price });
+        Inertia.post('/menus', { name, price, shop_id: props.shopId });
     };
 
     return (

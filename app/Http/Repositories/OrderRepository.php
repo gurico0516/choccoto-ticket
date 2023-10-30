@@ -21,12 +21,14 @@ class OrderRepository
     /**
      * 注文一覧を取得します。
      *
+     * @param integer $shopId
      * @return Collection
      */
-    public function getAllOrdersWithMenuDetails(): Collection
+    public function getAllOrdersWithMenuDetails(int $shopId): Collection
     {
         return Order::join('menus', 'orders.menu_id', '=', 'menus.id')
-                    ->select('orders.id', 'orders.order_number', 'orders.order_count', 'orders.created_at', 'menus.name', 'menus.price')
+                    ->select('orders.id', 'orders.order_number', 'orders.order_count', 'orders.created_at', 'menus.name', 'menus.price', 'menus.shop_id')
+                    ->where('menus.shop_id', $shopId)
                     ->get();
     }
 

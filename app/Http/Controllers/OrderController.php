@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Services\OrderService;
+use App\Http\Services\UserShopRoleService;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
+use App\Models\Order;
 
 class OrderController extends Controller
 {
@@ -14,14 +16,21 @@ class OrderController extends Controller
     protected $orderService;
 
     /**
+     * @var UserShopRoleService $userShopRoleService
+     */
+    protected $userShopRoleService;
+
+    /**
      * OrderController constructor.
      *
      * @param OrderService $orderService
+     * @param UserShopRoleService $userShopRoleService
      * @return void
      */
-    public function __construct(OrderService $orderService)
+    public function __construct(OrderService $orderService, UserShopRoleService $userShopRoleService)
     {
         $this->orderService = $orderService;
+        $this->userShopRoleService = $userShopRoleService;
     }
 
     /**
@@ -33,7 +42,15 @@ class OrderController extends Controller
     public function placeOrder(Request $request): \Illuminate\Http\JsonResponse
     {
         $selectedMenus = json_decode($request->input('orders'), true);
-        $orderNumber = rand(10, 99);
+        
+        // $orderNumber = rand(10, 99);
+        $userShopRole = $this->getUserShopRole();
+        $latestOrderNumber = Order::join('menus', 'orders.menu_id', '=', 'menus.id')
+                                ->where('menus.shop_id', $userShopRole['userShop'])
+                                ->max('order_number');
+
+        // 前のorderがない場合は1から始め、そうでない場合は1増やします
+        $orderNumber = $latestOrderNumber ? $latestOrderNumber + 1 : 1;
 
         foreach ($selectedMenus as $menu) {
             $orderData = [
@@ -43,7 +60,7 @@ class OrderController extends Controller
             ];
             $this->orderService->placeOrder($orderData);
         }
-        return response()->json(['注文番号は' => $orderNumber . '番です。']);
+        return response()->json(['注文番号は' => $orderNumber . '番です。', 'ご希望の方は注文番号を撮影して控えてください。レシートは後ほどお渡しします。']);
     }
 
     /**
@@ -53,12 +70,14 @@ class OrderController extends Controller
      */
     public function index(): \Inertia\Response
     {
-        $orders = $this->orderService->getAllOrdersWithDetails();
-        $isAuthenticated = auth()->check();
+        $userShopRole = $this->getUserShopRole();
+        $orders = $this->orderService->getAllOrdersWithDetails($userShopRole['userShop']);
 
         return Inertia::render('Orders/OrderList', [
             'orders' => $orders,
-            'isAuthenticated' => $isAuthenticated,
+            'isAuthenticated' => $userShopRole['isAuthenticated'],
+            'user_role' => $userShopRole['userRole'],
+            'user_shop_id' => $userShopRole['userShop']
         ]);
     }
 
@@ -74,5 +93,32 @@ class OrderController extends Controller
         $this->orderService->deleteOrdersByOrderNumbers($ids);
 
         return redirect()->route('orders.index');
+    }
+
+    /**
+     * ユーザーの権限と店舗IDを取得します。
+     * 
+     * @return array
+     */
+    private function getUserShopRole(): array {
+        $isAuthenticated = auth()->check();
+        $userId = auth()->id();
+        $userRoleShopId = [];
+        $userRoleShopId['isAuthenticated'] = $isAuthenticated;
+        $userRoleShopId['userId'] = $userId;
+
+        if ($isAuthenticated) {
+            $userShopRole = $this->userShopRoleService->getOneByUserId($userId);
+
+            if ($userShopRole) {
+                $userRoleShopId['userRole'] = $userShopRole->user_role;
+                $userRoleShopId['userShop'] = $userShopRole->shop_id;
+            }
+        } else {
+            $userRoleShopId['userRole'] = null;
+            $userRoleShopId['userShop'] = null;
+        }
+
+        return $userRoleShopId;
     }
 }
