@@ -126,38 +126,29 @@ export default function Welcome({ auth, laravelVersion, phpVersion }: PageProps<
 
                 {/* Footer Section */}
                 <div className="bg-gray-800 text-white p-6">
-                    {auth.user ? (
+                    <div className="flex justify-between">
                         <Link
-                            href={route('menus.index')}
+                            href=""
                             className="font-semibold hover:underline"
                         >
-                            メニュー一覧へ
+                            お店登録
                         </Link>
-                    ) : (
-                        <div className="flex justify-between">
-                            {/* <Link
-                                href={route('menus.index')}
+                        <div>
+                            <Link
+                                href={route('login')}
+                                className="mr-4 font-semibold hover:underline"
+                            >
+                                ログイン
+                            </Link>
+
+                            <Link
+                                href={route('register')}
                                 className="font-semibold hover:underline"
                             >
-                                メニュー
-                            </Link> */}
-                            <div>
-                                <Link
-                                    href={route('login')}
-                                    className="mr-4 font-semibold hover:underline"
-                                >
-                                    ログイン
-                                </Link>
-
-                                <Link
-                                    href={route('register')}
-                                    className="font-semibold hover:underline"
-                                >
-                                    新規登録
-                                </Link>
-                            </div>
+                                新規登録
+                            </Link>
                         </div>
-                    )}
+                    </div>
                 </div>
             </div>
         </>

@@ -27,9 +27,9 @@ class UserShopRoleService
      * user_shop_rolesテーブルからuserIdで指定されたデータを取得する
      * 
      * @param integer $userId
-     * @return UserShopRole
+     * @return UserShopRole|null
      */
-    public function getOneByUserId(int $userId): UserShopRole
+    public function getOneByUserId(int $userId): ?UserShopRole
     {
         return $this->userShopRoleRepository->getOneByUserId($userId);
     }

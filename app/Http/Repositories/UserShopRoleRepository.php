@@ -10,10 +10,15 @@ class UserShopRoleRepository
      * userIdで指定されたデータを取得する
      * 
      * @param integer $userId
-     * @return UserShopRole
+     * @return UserShopRole|null
      */
-    public function getOneByUserId(int $userId): UserShopRole
+    public function getOneByUserId(int $userId): ?UserShopRole
     {
-        return UserShopRole::where('user_id', $userId)->first();
+        $userShopRole = UserShopRole::where('user_id', $userId)->first();
+        if (!$userShopRole) {
+            throw new \Exception("UserShopRole for user_id {$userId} not found");
+        }
+
+        return $userShopRole;
     }
 }
