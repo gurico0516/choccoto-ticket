@@ -77,49 +77,66 @@ const MenuList: React.FC<Props> = ({ menus, isAuthenticated, user_role, user_sho
         }
     }
 
+    const inputRefs: { [key: number]: React.RefObject<HTMLInputElement> } = filteredMenus.reduce<{ [key: number]: React.RefObject<HTMLInputElement> }>((refs, menu) => {
+        refs[menu.id] = React.createRef<HTMLInputElement>();
+        return refs;
+    }, {});
+
     // メニューの選択/選択解除を処理
     const handleToggleMenu = (menu: Menu) => {
-        const count = selectedMenus.find(m => m.menu.id === menu.id)?.order_count || 0;
-        handleSelectMenu(menu, count === 0 ? 1 : count);
+        const currentSelection = selectedMenus.find(m => m.menu.id === menu.id);
+        const inputValue = inputRefs[menu.id].current ? parseInt(inputRefs[menu.id].current.value) : 1;
+        
+        if (currentSelection) {
+            handleSelectMenu(menu, 0);
+        } else {
+            handleSelectMenu(menu, inputValue);
+        }
     };
 
     return (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {isAuthenticated && user_role === 1 && (
-                <div className="col-span-full text-right mb-2">
-                    <a href="/menus/create" className="bg-green-500 text-white p-2 rounded mr-2">メニュー作成</a>
-                    <a href="/orders/index" className="bg-gray-500 text-white p-2 rounded mr-2">注文受付リスト</a>
-                    <button onClick={handleLogout} className="bg-red-500 text-white p-2 rounded mr-2">ログアウト</button>
+                <div className="col-span-full text-right mb-4">
+                    <a href="/menus/create" className="bg-green-500 text-white px-4 py-2 rounded-full hover:bg-green-600 mr-2 transition duration-200">メニュー作成</a>
+                    <a href="/orders/index" className="bg-gray-500 text-white px-4 py-2 rounded-full hover:bg-gray-600 mr-2 transition duration-200">注文受付リスト</a>
+                    <button onClick={handleLogout} className="bg-red-500 text-white px-4 py-2 rounded-full hover:bg-red-600 mr-2 transition duration-200">ログアウト</button>
                 </div>
             )}
             {filteredMenus.map((menu) => (
-                <div key={menu.id} className="card rounded-lg shadow-lg overflow-hidden">
-                    <div className="p-4">
-                        <h2 className="text-lg">{menu.name}</h2>
-                        <p className="text-sm text-gray-600">{menu.price}円</p>
+                <div 
+                    key={menu.id} 
+                    className={`card bg-white rounded-xl shadow-xl overflow-hidden transform hover:scale-105 transition duration-300 cursor-pointer ${selectedMenus.find(m => m.menu.id === menu.id) ? 'bg-blue-100' : ''}`}
+                    onClick={() => handleToggleMenu(menu)}
+                >
+                    <div className="p-6">
+                        <h2 className="text-xl font-bold mb-2">{menu.name}</h2>
+                        <p className="text-lg text-gray-600 mb-4">{menu.price}円</p>
                         {isAuthenticated && user_role === 1 && (
                             <div className="flex justify-end mt-2">
-                                <button onClick={() => handleEdit(menu.id)} className="text-blue-500 hover:text-blue-700 mr-2">編集</button>
-                                <button onClick={() => handleDelete(menu.id)} className="text-red-500 hover:text-red-700">削除</button>
+                                <button onClick={(e) => { e.stopPropagation(); handleEdit(menu.id) }} className="text-blue-500 hover:text-blue-700 text-md mr-4">編集</button>
+                                <button onClick={(e) => { e.stopPropagation(); handleDelete(menu.id) }} className="text-red-500 hover:text-red-700 text-md">削除</button>
                             </div>
                         )}
                         <input 
                             type="number" 
+                            ref={inputRefs[menu.id]}
                             min="1"
                             defaultValue="1"
-                            className="mt-2"
-                            onChange={(e) => handleSelectMenu(menu, parseInt(e.target.value))}
+                            className="mt-2 p-2 w-1/3 border rounded-md"
+                            onChange={(e) => { e.stopPropagation(); handleSelectMenu(menu, parseInt(e.target.value)); }}
                         />
                         <input 
                             type="checkbox" 
-                            className="mt-2 ml-2"
-                            onChange={() => handleToggleMenu(menu)}
+                            className="mt-2 ml-4 opacity-0"
+                            checked={!!selectedMenus.find(m => m.menu.id === menu.id)}
+                            readOnly
                         />
                     </div>
                 </div>
             ))}
             <button 
-                className="col-span-full bg-blue-500 text-white p-2 rounded"
+                className="col-span-full bg-blue-500 text-white px-4 py-2 rounded-full hover:bg-blue-600 transition duration-200"
                 onClick={handleOrder}
             >
                 注文する

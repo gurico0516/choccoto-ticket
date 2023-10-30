@@ -65,13 +65,15 @@ const OrderList: React.FC<Props> = ({ orders, isAuthenticated, user_role, user_s
         }
     };
 
+    const sortedOrders = [...orders].sort((a, b) => a.order_number - b.order_number);
+
     return (
-        <div className="p-4">
-            <h1 className="text-2xl mb-4">注文受付リスト</h1>
+        <div className="p-6 bg-white shadow-md rounded-lg">
+            <h1 className="text-3xl font-semibold mb-6">注文受付リスト</h1>
             {isAuthenticated && user_role === 1 && (
                 <div className="text-right mb-2">
-                    <button onClick={handleLogout} className="bg-red-500 text-white p-2 rounded mr-2">ログアウト</button>
-                    <button onClick={moveMenuList} className="bg-green-500 text-white p-2 rounded">メニューに戻る</button>
+                    <button onClick={handleLogout} className="bg-red-600 hover:bg-red-700 text-white p-3 rounded mr-3 transition duration-300">ログアウト</button>
+                    <button onClick={moveMenuList} className="bg-green-600 hover:bg-green-700 text-white p-3 rounded transition duration-300">メニューに戻る</button>
                 </div>
             )}
 
@@ -87,7 +89,7 @@ const OrderList: React.FC<Props> = ({ orders, isAuthenticated, user_role, user_s
                 </label>
             </div>
 
-            <table className="w-full border-collapse border">
+            <table className="w-full border-collapse border border-gray-200 mt-6">
                 <thead>
                     <tr>
                         <th className="border p-2">確認</th>
@@ -100,7 +102,7 @@ const OrderList: React.FC<Props> = ({ orders, isAuthenticated, user_role, user_s
                     </tr>
                 </thead>
                 <tbody>
-                    {orders.map(order => (
+                    {sortedOrders.map(order => (
                         <tr 
                             key={order.id} 
                             className={selectedIds.includes(order.id) ? "bg-gray-300 line-through" : ""}
@@ -123,7 +125,7 @@ const OrderList: React.FC<Props> = ({ orders, isAuthenticated, user_role, user_s
             </table>
             {isAuthenticated && user_role === 1 && (
                 <div className="text-right mt-2">
-                    <button onClick={handleDeleteSelected} className="bg-red-500 text-white p-2 rounded mr-2">選択した注文を削除</button>
+                    <button onClick={handleDeleteSelected} className="bg-red-600 hover:bg-red-700 text-white p-3 rounded mt-6 transition duration-300">選択した注文を削除</button>
                 </div>
             )}
         </div>
