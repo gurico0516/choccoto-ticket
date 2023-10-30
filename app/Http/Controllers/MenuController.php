@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Services\MenuService;
+use App\Http\Services\UserShopRoleService;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 
@@ -14,14 +15,21 @@ class MenuController extends Controller
     protected $menuService;
 
     /**
+     * @var UserShopRoleService $userShopRoleService
+     */
+    protected $userShopRoleService;
+
+    /**
      * MenuController constructor.
      *
      * @param MenuService $menuService
+     * @param UserShopRoleService $userShopRoleService
      * @return void
      */
-    public function __construct(MenuService $menuService)
+    public function __construct(MenuService $menuService, UserShopRoleService $userShopRoleService)
     {
         $this->menuService = $menuService;
+        $this->userShopRoleService = $userShopRoleService;
     }
 
     /**
@@ -33,7 +41,25 @@ class MenuController extends Controller
     {
         $menus = $this->menuService->getAllMenus();
         $isAuthenticated = auth()->check();
-        return Inertia::render('Menu/MenuList', ['menus' => $menus, 'isAuthenticated' => $isAuthenticated]);
+        $userId = auth()->id();
+        $userRole = null;
+        $userShopId = null;
+
+        if ($isAuthenticated) {
+            $userShopRole = $this->userShopRoleService->getOneByUserId($userId);
+
+            if ($userShopRole) {
+                $userRole = $userShopRole->user_role;
+                $userShopId = $userShopRole->shop_id;
+            }
+        }
+
+        return Inertia::render('Menu/MenuList', [
+            'menus' => $menus, 
+            'isAuthenticated' => $isAuthenticated,
+            'user_role' => $userRole,
+            'user_shop_id' => $userShopId
+        ]);
     }
 
     /**
@@ -43,7 +69,12 @@ class MenuController extends Controller
      */
     public function create(): \Inertia\Response
     {
-        return Inertia::render('Menu/MenuCreate');
+        $user = auth()->user();
+        $shop = $user->shops;
+    
+        return Inertia::render('Menu/MenuCreate', [
+            'shopId' => $shop[0]->id,
+        ]);
     }
 
     /**
@@ -54,7 +85,14 @@ class MenuController extends Controller
      */
     public function store(Request $request): \Illuminate\Http\RedirectResponse
     {
+        $request->validate([
+            'shop_id' => 'required|integer|exists:shops,id',  // shopsテーブルのidに存在するか確認
+            'name' => 'required|string',
+            'price' => 'required|integer'
+        ]);
+
         $this->menuService->createMenu($request->all());
+
         return redirect()->route('menus.index');
     }
 

@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\Shop;
+use App\Models\UserShopRole;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
@@ -35,6 +37,7 @@ class RegisteredUserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'shop_code' => 'required|string|max:255',
         ]);
 
         $user = User::create([
@@ -43,6 +46,16 @@ class RegisteredUserController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
+        $shop = Shop::where('shop_code', $request->shop_code)->first();
+
+        if ($shop) {
+            UserShopRole::create([
+                'user_id' => $user->id,
+                'shop_id' => $shop->id,
+                'user_role' => $request->user_role
+            ]);
+        }
+        
         event(new Registered($user));
 
         Auth::login($user);

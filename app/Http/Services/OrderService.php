@@ -37,11 +37,12 @@ class OrderService
     /**
      * 注文一覧を取得します。
      *
+     * @param integer $shopId
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function getAllOrdersWithDetails(): \Illuminate\Database\Eloquent\Collection
+    public function getAllOrdersWithDetails(int $shopId): \Illuminate\Database\Eloquent\Collection
     {
-        $orders = $this->orderRepository->getAllOrdersWithMenuDetails();
+        $orders = $this->orderRepository->getAllOrdersWithMenuDetails($shopId);
 
         // 合計金額の計算を行います。
         foreach ($orders as $order) {

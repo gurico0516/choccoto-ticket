@@ -12,6 +12,8 @@ export default function Register() {
         email: '',
         password: '',
         password_confirmation: '',
+        user_role: '1',
+        shop_code: '',
     });
 
     useEffect(() => {
@@ -97,6 +99,40 @@ export default function Register() {
                     />
 
                     <InputError message={errors.password_confirmation} className="mt-2" />
+                </div>
+
+                <div className="mt-4">
+                    <InputLabel htmlFor="user_role" value="ユーザー権限" />
+
+                    <select
+                        id="user_role"
+                        name="user_role"
+                        value={data.user_role}
+                        className="mt-1 block w-full border rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                        onChange={(e) => setData('user_role', e.target.value)}
+                        required
+                    >
+                        <option value="1">管理者</option>
+                        <option value="2">一般ユーザー</option>
+                    </select>
+
+                    <InputError message={errors.user_role} className="mt-2" />
+                </div>
+
+                <div className="mt-4">
+                    <InputLabel htmlFor="shop_code" value="店舗コード" />
+
+                    <TextInput
+                        id="shop_code"
+                        name="shop_code"
+                        value={data.shop_code}
+                        className="mt-1 block w-full"
+                        autoComplete="shop-code"
+                        onChange={(e) => setData('shop_code', e.target.value)}
+                        required
+                    />
+
+                    <InputError message={errors.shop_code} className="mt-2" />
                 </div>
 
                 <div className="flex items-center justify-end mt-4">

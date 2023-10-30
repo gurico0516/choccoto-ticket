@@ -42,6 +42,10 @@ class MenuService
      */
     public function createMenu(array $data): Menu
     {
+        if (!isset($data['shop_id']) || empty($data['shop_id'])) {
+            throw new \Exception('Shop ID is required.');
+        }
+
         return $this->menuRepository->create($data);
     }
 
@@ -74,7 +78,7 @@ class MenuService
      * @param integer $id
      * @return boolean
      */
-    public function deleteMenu(int $id)
+    public function deleteMenu(int $id): bool
     {
         return $this->menuRepository->delete($id);
     }
