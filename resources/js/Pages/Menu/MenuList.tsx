@@ -84,9 +84,13 @@ const MenuList: React.FC<Props> = ({ menus, isAuthenticated, user_role, user_sho
 
     // メニューの選択/選択解除を処理
     const handleToggleMenu = (menu: Menu) => {
+        if (!inputRefs[menu.id]) return;
+    
         const currentSelection = selectedMenus.find(m => m.menu.id === menu.id);
-        const inputValue = inputRefs[menu.id].current ? parseInt(inputRefs[menu.id].current.value) : 1;
-        
+        const inputValue = inputRefs[menu.id].current?.value 
+            ? parseInt(inputRefs[menu.id].current!.value) 
+            : 1;
+            
         if (currentSelection) {
             handleSelectMenu(menu, 0);
         } else {
