@@ -67,6 +67,16 @@ const OrderList: React.FC<Props> = ({ orders, isAuthenticated, user_role, user_s
 
     const sortedOrders = [...orders].sort((a, b) => a.order_number - b.order_number);
 
+    const orderTotals = sortedOrders.reduce((acc, order) => {
+        if (acc[order.order_number]) {
+            acc[order.order_number] += order.total_price;
+        } else {
+            acc[order.order_number] = order.total_price;
+        }
+        return acc;
+    }, {} as { [key: number]: number });
+
+
     return (
         <div className="p-6 bg-white shadow-md rounded-lg">
             <h1 className="text-3xl font-semibold mb-6">注文受付リスト</h1>
@@ -89,6 +99,7 @@ const OrderList: React.FC<Props> = ({ orders, isAuthenticated, user_role, user_s
                 </label>
             </div>
 
+
             <table className="w-full border-collapse border border-gray-200 mt-6">
                 <thead>
                     <tr>
@@ -97,32 +108,44 @@ const OrderList: React.FC<Props> = ({ orders, isAuthenticated, user_role, user_s
                         <th className="border p-2">メニュー</th>
                         <th className="border p-2">価格</th>
                         <th className="border p-2">数量</th>
-                        <th className="border p-2">合計金額</th>
+                        <th className="border p-2">商品合計金額</th>
                         <th className="border p-2">注文日時</th>
+                        <th className="border p-2">注文の合計金額</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {sortedOrders.map(order => (
-                        <tr 
-                            key={order.id} 
-                            className={selectedIds.includes(order.id) ? "bg-gray-300 line-through" : ""}
-                        >
-                            <td className="border p-2 flex justify-center">
-                                <input 
-                                    type="checkbox"
-                                    checked={selectedIds.includes(order.id)}
-                                    onChange={() => handleOrderSelect(order.id)} />
-                            </td>
-                            <td className="border p-2">{order.order_number}</td>
-                            <td className="border p-2">{order.name}</td>
-                            <td className="border p-2">{order.price}円</td>
-                            <td className="border p-2">{order.order_count}個</td>
-                            <td className="border p-2">{order.total_price}円</td>
-                            <td className="border p-2">{formatDateTime(order.created_at)}</td>
-                        </tr>
-                    ))}
+                    {sortedOrders.map((order, index, arr) => {
+                        const isStartOfOrderNumber = index === 0 || order.order_number !== arr[index - 1].order_number;
+                        const numberOfRowsForOrderNumber = arr.filter(o => o.order_number === order.order_number).length;
+
+                        return (
+                            <tr 
+                                key={order.id} 
+                                className={selectedIds.includes(order.id) ? "bg-gray-300 line-through" : ""}
+                            >
+                                <td className="border p-2 flex justify-center">
+                                    <input 
+                                        type="checkbox"
+                                        checked={selectedIds.includes(order.id)}
+                                        onChange={() => handleOrderSelect(order.id)} />
+                                </td>
+                                <td className="border p-2">{order.order_number}</td>
+                                <td className="border p-2">{order.name}</td>
+                                <td className="border p-2">{order.price}円</td>
+                                <td className="border p-2">{order.order_count}個</td>
+                                <td className="border p-2">{order.total_price}円</td>
+                                <td className="border p-2">{formatDateTime(order.created_at)}</td>
+                                {isStartOfOrderNumber && 
+                                    <td className="border p-2" rowSpan={numberOfRowsForOrderNumber}>
+                                        {orderTotals[order.order_number] ? `${orderTotals[order.order_number]}円` : '-'}
+                                    </td>
+                                }
+                            </tr>
+                        );
+                    })}
                 </tbody>
             </table>
+            
             {isAuthenticated && user_role === 1 && (
                 <div className="text-right mt-2">
                     <button onClick={handleDeleteSelected} className="bg-red-600 hover:bg-red-700 text-white p-3 rounded mt-6 transition duration-300">選択した注文を削除</button>
