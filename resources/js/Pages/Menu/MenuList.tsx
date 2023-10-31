@@ -62,8 +62,14 @@ const MenuList: React.FC<Props> = ({ menus, isAuthenticated, user_role, user_sho
         orderConfirmationMessage += `\n合計金額: ${totalAmount}円`;
 
         // 注文の確認
+        // 注文の確認
         if (window.confirm(orderConfirmationMessage)) {
-            Inertia.post("/placeOrder", { orders: JSON.stringify(selectedMenus) });
+            Inertia.post("/placeOrder", { orders: JSON.stringify(selectedMenus) }, {
+                // 追加: サーバーからのレスポンスを処理するコールバック
+                onSuccess: (page) => {
+                    alert(`注文番号は${page.props.orderNumber}番です。ご希望の方は注文番号を撮影して控えてください。レシートは後ほどお渡しします。`);
+                }
+            });
         }
     };
 
@@ -100,6 +106,7 @@ const MenuList: React.FC<Props> = ({ menus, isAuthenticated, user_role, user_sho
 
     return (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <h1 className="text-3xl font-semibold ml-6 mt-6">メニュー</h1>
             {isAuthenticated && user_role === 1 && (
                 <div className="col-span-full text-right mb-4">
                     <a href="/menus/create" className="bg-green-500 text-white px-4 py-2 rounded-full hover:bg-green-600 mr-2 transition duration-200">メニュー作成</a>

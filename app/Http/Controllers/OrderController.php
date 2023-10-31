@@ -60,7 +60,12 @@ class OrderController extends Controller
             ];
             $this->orderService->placeOrder($orderData);
         }
-        return response()->json(['注文番号は' => $orderNumber . '番です。', 'ご希望の方は注文番号を撮影して控えてください。レシートは後ほどお渡しします。']);
+        
+        return response()->json([
+            'message' => '注文完了しました！',
+            '注文番号は' => $orderNumber . '番です。',
+            'ご希望の方は' => '注文番号を撮影して控えてください。レシートは後ほどお渡しします。'
+        ]);
     }
 
     /**
