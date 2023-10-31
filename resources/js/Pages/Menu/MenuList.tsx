@@ -108,11 +108,11 @@ const MenuList: React.FC<Props> = ({ menus, isAuthenticated, user_role, user_sho
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <h1 className="text-3xl font-semibold ml-6 mt-6">メニュー</h1>
             {isAuthenticated && user_role === 1 && (
-                <div className="col-span-full text-right mb-4">
-                    <a href="/menus/create" className="bg-green-500 text-white px-4 py-2 rounded-full hover:bg-green-600 mr-2 transition duration-200">メニュー作成</a>
-                    <a href="/orders/index" className="bg-gray-500 text-white px-4 py-2 rounded-full hover:bg-gray-600 mr-2 transition duration-200">注文受付リスト</a>
-                    <button onClick={handleLogout} className="bg-red-500 text-white px-4 py-2 rounded-full hover:bg-red-600 mr-2 transition duration-200">ログアウト</button>
-                </div>
+            <div className="col-span-full text-right mb-4 flex flex-wrap justify-end sm:justify-center">
+                <a href="/menus/create" className="bg-green-500 text-white px-3 py-1 sm:px-4 sm:py-2 rounded-full hover:bg-green-600 m-2 transition duration-200">メニュー作成</a>
+                <a href="/orders/index" className="bg-gray-500 text-white px-3 py-1 sm:px-4 sm:py-2 rounded-full hover:bg-gray-600 m-2 transition duration-200">注文受付リスト</a>
+                <button onClick={handleLogout} className="bg-red-500 text-white px-3 py-1 sm:px-4 sm:py-2 rounded-full hover:bg-red-600 m-2 transition duration-200">ログアウト</button>
+            </div>
             )}
             {filteredMenus.map((menu) => (
                 <div 
